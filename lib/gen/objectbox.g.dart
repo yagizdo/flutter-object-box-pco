@@ -49,14 +49,10 @@ final _entities = <obx_int.ModelEntity>[
         relationTarget: 'Address',
       ),
     ],
-    relations: <obx_int.ModelRelation>[
-      obx_int.ModelRelation(
-        id: const obx_int.IdUid(1, 4132497796193155355),
-        name: 'orders',
-        targetId: const obx_int.IdUid(3, 7445305427423553044),
-      ),
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[
+      obx_int.ModelBacklink(name: 'orders', srcEntity: 'Order', srcField: ''),
     ],
-    backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 7959214012939725421),
@@ -187,7 +183,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     retiredEntityUids: const [],
     retiredIndexUids: const [],
     retiredPropertyUids: const [],
-    retiredRelationUids: const [],
+    retiredRelationUids: const [4132497796193155355],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
     version: 1,
@@ -198,7 +194,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
       model: _entities[0],
       toOneRelations: (User object) => [object.address],
       toManyRelations: (User object) => {
-        obx_int.RelInfo<User>.toMany(1, object.id): object.orders,
+        obx_int.RelInfo<Order>.toOneBacklink(
+          4,
+          object.id,
+          (Order srcObject) => srcObject.user,
+        ): object.orders,
       },
       getId: (User object) => object.id,
       setId: (User object, int id) {
@@ -234,7 +234,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         obx_int.InternalToManyAccess.setRelInfo<User>(
           object.orders,
           store,
-          obx_int.RelInfo<User>.toMany(1, object.id),
+          obx_int.RelInfo<Order>.toOneBacklink(
+            4,
+            object.id,
+            (Order srcObject) => srcObject.user,
+          ),
         );
         return object;
       },
@@ -354,9 +358,7 @@ class User_ {
   );
 
   /// see [User.orders]
-  static final orders = obx.QueryRelationToMany<User, Order>(
-    _entities[0].relations[0],
-  );
+  static final orders = obx.QueryBacklinkToMany<Order, User>(Order_.user);
 }
 
 /// [Address] entity fields to define ObjectBox queries.

@@ -28,13 +28,7 @@
           "relationTarget": "Address"
         }
       ],
-      "relations": [
-        {
-          "id": "1:4132497796193155355",
-          "name": "orders",
-          "targetId": "3:7445305427423553044"
-        }
-      ]
+      "relations": []
     },
     {
       "id": "2:7959214012939725421",
@@ -112,6 +106,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [],
-  "retiredRelationUids": [],
+  "retiredRelationUids": [
+    4132497796193155355
+  ],
   "version": 1
 }

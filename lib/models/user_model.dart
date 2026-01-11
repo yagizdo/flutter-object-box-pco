@@ -9,6 +9,9 @@ class User {
   String? name;
 
   // We can have multiple orders for a user
+  // We use backlink annotation to define the relation from the other side
+  // This is a to-many relation
+  @Backlink()
   final orders = ToMany<Order>();
 
   // We can have one address for a user
