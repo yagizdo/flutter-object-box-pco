@@ -19,5 +19,13 @@ dev_dependencies:
   build_runner: ^2.10.4
   objectbox_generator: any
 
+objectbox:
+  # Writes objectbox-model.json and objectbox.g.dart to lib/custom (and test/custom).
+  output_dir: gen
+  # Or optionally specify the lib and test output folder separately.
+  # output_dir:
+  #   lib: custom
+  #   test: other
+
 flutter:
   uses-material-design: true
