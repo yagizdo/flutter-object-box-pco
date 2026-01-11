@@ -1,0 +1,23 @@
+name: object_box_poc
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  objectbox: ^5.1.0
+  objectbox_flutter_libs: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.10.4
+  objectbox_generator: any
+
+flutter:
+  uses-material-design: true
