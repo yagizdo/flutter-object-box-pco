@@ -20,7 +20,9 @@ class ObjectboxManager {
     _orderBox = Box<Order>(_store);
   }
 
-  Future<ObjectboxManager> create() async {
+  /// Create the instance of the ObjectboxManager
+  /// This method will create the instance of the ObjectboxManager
+  static Future<ObjectboxManager> create() async {
     final docDirectory = await getApplicationDocumentsDirectory();
     final store = await openStore(
       directory: p.join(docDirectory.path, 'objectbox-poc'),
