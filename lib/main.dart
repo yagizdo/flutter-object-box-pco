@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:object_box_poc/core/manager/objectbox_manager.dart';
+import 'package:object_box_poc/core/cache/manager/objectbox_manager.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 Future<void> main() async {
@@ -10,7 +10,7 @@ Future<void> main() async {
   /// This is a workaround to load the ObjectBox library on Android 6 and older
   loadObjectBoxLibraryAndroidCompat();
 
-  await ObjectboxManager.create();
+  await ObjectboxManager.instance.create();
 
   runApp(const MainApp());
 }
