@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:object_box_poc/core/objectbox_manager.dart';
+import 'package:object_box_poc/core/manager/objectbox_manager.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-late ObjectboxManager _objectboxManager;
 Future<void> main() async {
   /// This is required to initialize the Flutter binding
   /// So ObjectBox can get the application directory to store the database in.
@@ -11,7 +10,7 @@ Future<void> main() async {
   /// This is a workaround to load the ObjectBox library on Android 6 and older
   loadObjectBoxLibraryAndroidCompat();
 
-  _objectboxManager = await ObjectboxManager.create();
+  await ObjectboxManager.create();
 
   runApp(const MainApp());
 }
