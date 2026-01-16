@@ -1,6 +1,6 @@
 # ObjectBox Flutter POC
 
-A proof-of-concept Flutter application demonstrating ObjectBox database integration with entity relationships, singleton manager pattern, and CRUD operations.
+A proof-of-concept Flutter application demonstrating ObjectBox database integration with entity relationships and a small UI that makes data access methods + relationships explicit.
 
 ## Overview
 
@@ -18,6 +18,7 @@ This project showcases how to implement a local NoSQL database using [ObjectBox]
 - **Entity Relationships**: Demonstrates `ToOne` and `ToMany` relations between entities
 - **Singleton Pattern**: Centralized database manager for consistent access across the app
 - **Type-Safe Queries**: Leverages ObjectBox's generated code for compile-time safety
+- **PoC Relationship UI**: A simple UI that shows which manager/relation methods are used, and lets you tap through `User ↔ Orders ↔ Address`
 
 ## Project Structure
 
@@ -29,15 +30,51 @@ lib/
 │       │   └── i_objectbox_manager.dart    # Manager interface
 │       └── manager/
 │           └── objectbox_manager.dart       # Singleton implementation
+├── screens/
+│   ├── home_screen.dart                     # Users + Orders on one screen
+│   └── detail_screen.dart                   # Shared modular detail screen
 ├── gen/
 │   ├── objectbox-model.json                 # Generated model schema
 │   └── objectbox.g.dart                     # Generated ObjectBox code
 ├── models/
 │   ├── user_model.dart                      # User entity
 │   ├── order_model.dart                     # Order entity
-│   └── address_model.dart                   # Address entity
+│   ├── address_model.dart                   # Address entity
+│   └── detail_model.dart                    # Sealed model for DetailScreen
+├── widgets/
+│   ├── entity_list_card.dart                # Section card w/ method label
+│   ├── method_info_box.dart                 # Small code snippet + explanation
+│   └── relationship_card.dart               # Relationship section wrapper
 └── main.dart                                # App entry point
 ```
+
+## PoC UI: What to Look For
+
+The UI is intentionally minimal and focuses on making ObjectBox usage obvious:
+
+- **Home screen** (`lib/screens/home_screen.dart`)
+  - Shows **Users** and **Orders** on one screen.
+  - Displays the exact list methods above each list:
+    - `manager.getUsers()`
+    - `manager.getOrders()`
+  - Tap a **User** or **Order** to open the same reusable detail screen.
+
+- **Shared detail screen** (`lib/screens/detail_screen.dart`)
+  - Reloads the selected entity by ID and shows the method as a snippet:
+    - `manager.getUserById(id)`
+    - `manager.getOrderById(id)`
+  - Shows relationships with method names + short snippets:
+    - **User → Orders** via `user.orders` (**@Backlink**, `ToMany`)
+    - **User → Address** via `user.address.target` (`ToOne`)
+    - **Order → User** via `order.user.target` (`ToOne`)
+  - Relationships are **clickable** so you can traverse:
+    - User → Order → User → ...
+
+## Key Architectural Decisions (PoC)
+
+- **Keep it simple**: no additional state management library; `StatefulWidget` + `setState` is enough for the PoC.
+- **Single detail screen**: `DetailScreen` accepts a sealed `DetailModel` (`UserDetailModel` or `OrderDetailModel`) and adapts via `switch`.
+- **Explicit methods in UI**: the screen surfaces manager calls and relation access (`*.target`, `@Backlink`) using small info boxes.
 
 ## Entity Models
 
@@ -169,9 +206,17 @@ void main() async {
 ObjectboxManager.instance.save();
 ```
 
-#### Read (Get All)
+#### Read (Console Get All)
 ```dart
 ObjectboxManager.instance.get();
+```
+
+#### Read (Used by the PoC UI)
+```dart
+final users = ObjectboxManager.instance.getUsers();
+final orders = ObjectboxManager.instance.getOrders();
+final user = ObjectboxManager.instance.getUserById(1);
+final order = ObjectboxManager.instance.getOrderById(1);
 ```
 
 #### Update

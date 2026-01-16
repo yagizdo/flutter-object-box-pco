@@ -31,6 +31,12 @@ class ObjectboxManager implements IObjectboxManager {
 
   ObjectboxManager._();
 
+  // ---------- UI-friendly read methods (used by the PoC screens) ----------
+  List<User> getUsers() => _userBox.getAll();
+  List<OrderModel> getOrders() => _orderBox.getAll();
+  User? getUserById(int id) => _userBox.get(id);
+  OrderModel? getOrderById(int id) => _orderBox.get(id);
+
   @override
   Future<void> create() async {
     final docDirectory = await getApplicationDocumentsDirectory();
@@ -46,13 +52,11 @@ class ObjectboxManager implements IObjectboxManager {
     _orderBox = _store.box<OrderModel>();
   }
 
-  OrderModel _createOrder(User user) {
+  OrderModel _createOrder({required User user}) {
     final order = OrderModel();
     order.name = 'Order ${Random().nextInt(10)}';
     order.amount = Random().nextInt(1000);
     order.user.target = user;
-
-    user.orders.add(order);
 
     return order;
   }
@@ -62,6 +66,31 @@ class ObjectboxManager implements IObjectboxManager {
     user.name = _generateRandomFullName().$1;
     user.surname = _generateRandomFullName().$2;
     return user;
+  }
+
+  Address _createAddress() {
+    final streets = [
+      'Main St',
+      'Oak Ave',
+      'Pine Rd',
+      'Maple Dr',
+      'Cedar Ln',
+    ];
+    final cities = [
+      'Springfield',
+      'Riverside',
+      'Fairview',
+      'Madison',
+      'Georgetown',
+    ];
+    final states = ['CA', 'NY', 'TX', 'FL', 'WA'];
+
+    final address = Address();
+    address.street = '${100 + Random().nextInt(900)} ${streets[Random().nextInt(streets.length)]}';
+    address.city = cities[Random().nextInt(cities.length)];
+    address.state = states[Random().nextInt(states.length)];
+    address.zip = '${10000 + Random().nextInt(89999)}';
+    return address;
   }
 
   (String, String) _generateRandomFullName() {
@@ -97,19 +126,37 @@ class ObjectboxManager implements IObjectboxManager {
 
   @override
   bool save() {
-    User user = _createUser();
-    User userSecond = _createUser();
-    User userThird = _createUser();
+    // Persist Users (and their Address) first so relations are stable.
+    final users = <User>[
+      _createUser(),
+      _createUser(),
+      _createUser(),
+    ];
 
-    OrderModel orderOne = _createOrder(user);
-    OrderModel orderTwo = _createOrder(userSecond);
-    OrderModel orderThird = _createOrder(userThird);
+    for (var i = 0; i < users.length; i++) {
+      // Keep one user without address to demonstrate optional relations.
+      if (i == users.length - 1) continue;
+      final address = _createAddress();
+      _addressBox.put(address);
+      users[i].address.target = address;
+    }
 
-    final orderID = _orderBox.putMany([orderOne, orderTwo, orderThird]);
-    final userID = _userBox.putMany([user, userSecond, userThird]);
-    if (userID.isNotEmpty && orderID.isNotEmpty) {
-      print('Saved User ID: $userID');
-      print('Saved Order ID: $orderID');
+    final userIds = _userBox.putMany(users);
+
+    // Now create Orders referencing persisted Users.
+    final orders = <OrderModel>[];
+    for (final user in users) {
+      final orderCount = 1 + Random().nextInt(3);
+      for (var i = 0; i < orderCount; i++) {
+        orders.add(_createOrder(user: user));
+      }
+    }
+
+    final orderIds = _orderBox.putMany(orders);
+
+    if (userIds.isNotEmpty && orderIds.isNotEmpty) {
+      print('Saved User IDs: $userIds');
+      print('Saved Order IDs: $orderIds');
       return true;
     }
     print('Failed to save users and orders');
