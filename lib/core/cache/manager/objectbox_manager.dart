@@ -196,4 +196,18 @@ class ObjectboxManager implements IObjectboxManager {
   void close() {
     _store.close();
   }
+
+  // ========== UI Data Access Methods ==========
+
+  /// Get all users from the database
+  List<User> getUsers() => _userBox.getAll();
+
+  /// Get all orders from the database
+  List<OrderModel> getOrders() => _orderBox.getAll();
+
+  /// Get a specific user by ID
+  User? getUserById(int id) => _userBox.get(id);
+
+  /// Get a specific order by ID
+  OrderModel? getOrderById(int id) => _orderBox.get(id);
 }
