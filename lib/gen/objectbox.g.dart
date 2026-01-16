@@ -24,7 +24,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 8820714981293720248),
     name: 'User',
-    lastPropertyId: const obx_int.IdUid(3, 2952978512533968470),
+    lastPropertyId: const obx_int.IdUid(4, 1599252078454220092),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -48,10 +48,20 @@ final _entities = <obx_int.ModelEntity>[
         relationField: 'address',
         relationTarget: 'Address',
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 1599252078454220092),
+        name: 'surname',
+        type: 9,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[
-      obx_int.ModelBacklink(name: 'orders', srcEntity: 'Order', srcField: ''),
+      obx_int.ModelBacklink(
+        name: 'orders',
+        srcEntity: 'OrderModel',
+        srcField: '',
+      ),
     ],
   ),
   obx_int.ModelEntity(
@@ -95,35 +105,35 @@ final _entities = <obx_int.ModelEntity>[
     backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
-    id: const obx_int.IdUid(3, 7445305427423553044),
-    name: 'Order',
-    lastPropertyId: const obx_int.IdUid(4, 4010967543929883861),
+    id: const obx_int.IdUid(4, 5284009614119521427),
+    name: 'OrderModel',
+    lastPropertyId: const obx_int.IdUid(4, 2331898418828756473),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(1, 7722067218622121963),
+        id: const obx_int.IdUid(1, 2383257811257602540),
         name: 'id',
         type: 6,
         flags: 1,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(2, 712051444234563313),
+        id: const obx_int.IdUid(2, 1357022127999954338),
         name: 'name',
         type: 9,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(3, 1027546909074279673),
+        id: const obx_int.IdUid(3, 7104453800917903551),
         name: 'amount',
         type: 6,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 4010967543929883861),
+        id: const obx_int.IdUid(4, 2331898418828756473),
         name: 'userId',
         type: 11,
         flags: 520,
-        indexId: const obx_int.IdUid(1, 6671757945099898620),
+        indexId: const obx_int.IdUid(3, 1312824807576338544),
         relationField: 'user',
         relationTarget: 'User',
       ),
@@ -176,13 +186,18 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(3, 7445305427423553044),
-    lastIndexId: const obx_int.IdUid(2, 6816134678724825280),
+    lastEntityId: const obx_int.IdUid(4, 5284009614119521427),
+    lastIndexId: const obx_int.IdUid(3, 1312824807576338544),
     lastRelationId: const obx_int.IdUid(1, 4132497796193155355),
     lastSequenceId: const obx_int.IdUid(0, 0),
-    retiredEntityUids: const [],
+    retiredEntityUids: const [7445305427423553044],
     retiredIndexUids: const [],
-    retiredPropertyUids: const [],
+    retiredPropertyUids: const [
+      7722067218622121963,
+      712051444234563313,
+      1027546909074279673,
+      4010967543929883861,
+    ],
     retiredRelationUids: const [4132497796193155355],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
@@ -194,10 +209,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
       model: _entities[0],
       toOneRelations: (User object) => [object.address],
       toManyRelations: (User object) => {
-        obx_int.RelInfo<Order>.toOneBacklink(
+        obx_int.RelInfo<OrderModel>.toOneBacklink(
           4,
           object.id,
-          (Order srcObject) => srcObject.user,
+          (OrderModel srcObject) => srcObject.user,
         ): object.orders,
       },
       getId: (User object) => object.id,
@@ -208,10 +223,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final nameOffset = object.name == null
             ? null
             : fbb.writeString(object.name!);
-        fbb.startTable(4);
+        final surnameOffset = object.surname == null
+            ? null
+            : fbb.writeString(object.surname!);
+        fbb.startTable(5);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, nameOffset);
         fbb.addInt64(2, object.address.targetId);
+        fbb.addOffset(3, surnameOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -223,7 +242,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
           ..name = const fb.StringReader(
             asciiOptimization: true,
-          ).vTableGetNullable(buffer, rootOffset, 6);
+          ).vTableGetNullable(buffer, rootOffset, 6)
+          ..surname = const fb.StringReader(
+            asciiOptimization: true,
+          ).vTableGetNullable(buffer, rootOffset, 10);
         object.address.targetId = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -234,10 +256,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         obx_int.InternalToManyAccess.setRelInfo<User>(
           object.orders,
           store,
-          obx_int.RelInfo<Order>.toOneBacklink(
+          obx_int.RelInfo<OrderModel>.toOneBacklink(
             4,
             object.id,
-            (Order srcObject) => srcObject.user,
+            (OrderModel srcObject) => srcObject.user,
           ),
         );
         return object;
@@ -295,15 +317,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
-    Order: obx_int.EntityDefinition<Order>(
+    OrderModel: obx_int.EntityDefinition<OrderModel>(
       model: _entities[2],
-      toOneRelations: (Order object) => [object.user],
-      toManyRelations: (Order object) => {},
-      getId: (Order object) => object.id,
-      setId: (Order object, int id) {
+      toOneRelations: (OrderModel object) => [object.user],
+      toManyRelations: (OrderModel object) => {},
+      getId: (OrderModel object) => object.id,
+      setId: (OrderModel object, int id) {
         object.id = id;
       },
-      objectToFB: (Order object, fb.Builder fbb) {
+      objectToFB: (OrderModel object, fb.Builder fbb) {
         final nameOffset = object.name == null
             ? null
             : fbb.writeString(object.name!);
@@ -319,7 +341,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final buffer = fb.BufferContext(fbData);
         final rootOffset = buffer.derefObject(0);
 
-        final object = Order()
+        final object = OrderModel()
           ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
           ..name = const fb.StringReader(
             asciiOptimization: true,
@@ -357,8 +379,15 @@ class User_ {
     _entities[0].properties[2],
   );
 
+  /// See [User.surname].
+  static final surname = obx.QueryStringProperty<User>(
+    _entities[0].properties[3],
+  );
+
   /// see [User.orders]
-  static final orders = obx.QueryBacklinkToMany<Order, User>(Order_.user);
+  static final orders = obx.QueryBacklinkToMany<OrderModel, User>(
+    OrderModel_.user,
+  );
 }
 
 /// [Address] entity fields to define ObjectBox queries.
@@ -389,23 +418,25 @@ class Address_ {
   );
 }
 
-/// [Order] entity fields to define ObjectBox queries.
-class Order_ {
-  /// See [Order.id].
-  static final id = obx.QueryIntegerProperty<Order>(_entities[2].properties[0]);
+/// [OrderModel] entity fields to define ObjectBox queries.
+class OrderModel_ {
+  /// See [OrderModel.id].
+  static final id = obx.QueryIntegerProperty<OrderModel>(
+    _entities[2].properties[0],
+  );
 
-  /// See [Order.name].
-  static final name = obx.QueryStringProperty<Order>(
+  /// See [OrderModel.name].
+  static final name = obx.QueryStringProperty<OrderModel>(
     _entities[2].properties[1],
   );
 
-  /// See [Order.amount].
-  static final amount = obx.QueryIntegerProperty<Order>(
+  /// See [OrderModel.amount].
+  static final amount = obx.QueryIntegerProperty<OrderModel>(
     _entities[2].properties[2],
   );
 
-  /// See [Order.user].
-  static final user = obx.QueryRelationToOne<Order, User>(
+  /// See [OrderModel.user].
+  static final user = obx.QueryRelationToOne<OrderModel, User>(
     _entities[2].properties[3],
   );
 }

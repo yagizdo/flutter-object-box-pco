@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:8820714981293720248",
-      "lastPropertyId": "3:2952978512533968470",
+      "lastPropertyId": "4:1599252078454220092",
       "name": "User",
       "properties": [
         {
@@ -26,6 +26,11 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "Address"
+        },
+        {
+          "id": "4:1599252078454220092",
+          "name": "surname",
+          "type": 9
         }
       ],
       "relations": []
@@ -65,30 +70,30 @@
       "relations": []
     },
     {
-      "id": "3:7445305427423553044",
-      "lastPropertyId": "4:4010967543929883861",
-      "name": "Order",
+      "id": "4:5284009614119521427",
+      "lastPropertyId": "4:2331898418828756473",
+      "name": "OrderModel",
       "properties": [
         {
-          "id": "1:7722067218622121963",
+          "id": "1:2383257811257602540",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:712051444234563313",
+          "id": "2:1357022127999954338",
           "name": "name",
           "type": 9
         },
         {
-          "id": "3:1027546909074279673",
+          "id": "3:7104453800917903551",
           "name": "amount",
           "type": 6
         },
         {
-          "id": "4:4010967543929883861",
+          "id": "4:2331898418828756473",
           "name": "userId",
-          "indexId": "1:6671757945099898620",
+          "indexId": "3:1312824807576338544",
           "type": 11,
           "flags": 520,
           "relationTarget": "User"
@@ -97,15 +102,22 @@
       "relations": []
     }
   ],
-  "lastEntityId": "3:7445305427423553044",
-  "lastIndexId": "2:6816134678724825280",
+  "lastEntityId": "4:5284009614119521427",
+  "lastIndexId": "3:1312824807576338544",
   "lastRelationId": "1:4132497796193155355",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    7445305427423553044
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    7722067218622121963,
+    712051444234563313,
+    1027546909074279673,
+    4010967543929883861
+  ],
   "retiredRelationUids": [
     4132497796193155355
   ],

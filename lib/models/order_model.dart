@@ -2,7 +2,7 @@ import 'package:object_box_poc/models/user_model.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
-class Order {
+class OrderModel {
   @Id()
   int id = 0;
 
