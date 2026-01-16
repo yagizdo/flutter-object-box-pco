@@ -18,6 +18,91 @@ This project showcases how to implement a local NoSQL database using [ObjectBox]
 - **Entity Relationships**: Demonstrates `ToOne` and `ToMany` relations between entities
 - **Singleton Pattern**: Centralized database manager for consistent access across the app
 - **Type-Safe Queries**: Leverages ObjectBox's generated code for compile-time safety
+- **Interactive UI Demo**: Visual demonstration of entity relationships and data access methods
+
+## PoC UI Demo
+
+The application includes a fully functional UI that visually demonstrates ObjectBox concepts and relationship navigation.
+
+### Screens
+
+#### HomeScreen
+
+The main screen displays all Users and Orders with:
+
+- **Users Section**: Shows all users retrieved via `userBox.getAll()`
+- **Orders Section**: Shows all orders retrieved via `orderBox.getAll()`
+- **Add Data Button** (+): Adds sample users and orders
+- **Clear Data Button**: Removes all entities from the database
+- **Pull-to-Refresh**: Reloads data from ObjectBox
+
+```
+┌─────────────────────────────────────────┐
+│  ObjectBox PoC Demo          [+] [🗑️]  │
+├─────────────────────────────────────────┤
+│  👥 Users                          [3]  │
+│  ┌─────────────────────────────────────┐│
+│  │ 📦 userBox.getAll()                ││
+│  └─────────────────────────────────────┘│
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │ John D. │ │ Jane S. │ │ Jack B. │   │
+│  │ 2 orders│ │ 1 order │ │ 0 orders│   │
+│  └─────────┘ └─────────┘ └─────────┘   │
+│                                         │
+│  🛍️ Orders                         [3]  │
+│  ┌─────────────────────────────────────┐│
+│  │ 📦 orderBox.getAll()               ││
+│  └─────────────────────────────────────┘│
+│  ┌─────────────────────────────────┐   │
+│  │ Order 1 - $250    → John Doe    │   │
+│  └─────────────────────────────────┘   │
+└─────────────────────────────────────────┘
+```
+
+#### DetailScreen
+
+A shared detail screen that uses Dart 3 sealed classes and pattern matching to display either User or Order details.
+
+**User Details show:**
+- User information (name, ID)
+- Address via `user.address.target` (ToOne relationship)
+- Orders via `user.orders` (ToMany Backlink)
+
+**Order Details show:**
+- Order information (name, amount, ID)
+- Customer via `order.user.target` (ToOne relationship)
+
+Each relationship section includes a `MethodInfoBox` displaying the ObjectBox code used to access the data.
+
+### Sealed Class Pattern
+
+The `DetailModel` sealed class enables type-safe navigation and pattern matching:
+
+```dart
+sealed class DetailModel {
+  String get title;
+  String get subtitle;
+}
+
+class UserDetailModel extends DetailModel { ... }
+class OrderDetailModel extends DetailModel { ... }
+
+// Usage in DetailScreen
+switch (model) {
+  UserDetailModel(user: final user) => _buildUserDetails(user),
+  OrderDetailModel(order: final order) => _buildOrderDetails(order),
+}
+```
+
+### Visual Relationship Demonstration
+
+The UI demonstrates how ObjectBox relationships work:
+
+| Relationship | Access Method | UI Display |
+|--------------|---------------|------------|
+| User → Address | `user.address.target` | Address card in user details |
+| User → Orders | `user.orders` (Backlink) | List of order cards |
+| Order → User | `order.user.target` | User card in order details |
 
 ## Project Structure
 
@@ -35,8 +120,16 @@ lib/
 ├── models/
 │   ├── user_model.dart                      # User entity
 │   ├── order_model.dart                     # Order entity
-│   └── address_model.dart                   # Address entity
-└── main.dart                                # App entry point
+│   ├── address_model.dart                   # Address entity
+│   └── detail_model.dart                    # Sealed class for detail screen
+├── screens/
+│   ├── home_screen.dart                     # Main screen with entity lists
+│   └── detail_screen.dart                   # Shared detail screen
+├── widgets/
+│   ├── entity_list_card.dart                # Reusable list card widget
+│   ├── method_info_box.dart                 # Code snippet display widget
+│   └── relationship_card.dart               # Relationship visualization
+└── main.dart                                # App entry point with theming
 ```
 
 ## Entity Models
@@ -189,6 +282,20 @@ ObjectboxManager.instance.delete(userId);
 ObjectboxManager.instance.removeAll();
 ```
 
+### Data Access Methods
+
+The manager provides convenient methods for UI consumption:
+
+```dart
+// Get all entities
+List<User> users = ObjectboxManager.instance.getUsers();
+List<OrderModel> orders = ObjectboxManager.instance.getOrders();
+
+// Get by ID
+User? user = ObjectboxManager.instance.getUserById(1);
+OrderModel? order = ObjectboxManager.instance.getOrderById(1);
+```
+
 ### Accessing Boxes Directly
 
 ```dart
@@ -199,6 +306,50 @@ final addressBox = ObjectboxManager.instance.addressBox;
 // Custom queries
 final users = userBox.getAll();
 final specificUser = userBox.get(1);
+```
+
+## Reusable Widgets
+
+The UI is built with reusable, customizable widgets:
+
+### EntityListCard
+
+A card widget for displaying entities in lists with icon, title, subtitle, and optional trailing info.
+
+```dart
+EntityListCard(
+  title: 'John Doe',
+  subtitle: 'ID: 1',
+  trailing: '2 orders',
+  icon: Icons.person,
+  onTap: () => navigateToDetail(user),
+)
+```
+
+### MethodInfoBox
+
+Displays ObjectBox method names with optional code snippets and syntax highlighting.
+
+```dart
+MethodInfoBox(
+  methodName: 'user.orders',
+  description: 'ToMany relationship with Backlink',
+  codeSnippet: 'for (var order in user.orders) { ... }',
+)
+```
+
+### RelationshipCard
+
+Visualizes entity relationships with relationship type badges and method code display.
+
+```dart
+RelationshipCard(
+  title: 'Orders',
+  relationshipType: 'ToMany (Backlink)',
+  methodCode: 'user.orders',
+  icon: Icons.shopping_bag,
+  child: OrdersList(orders: user.orders),
+)
 ```
 
 ## Key Concepts

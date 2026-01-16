@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:object_box_poc/core/cache/manager/objectbox_manager.dart';
+import 'package:object_box_poc/screens/home_screen.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 Future<void> main() async {
@@ -22,57 +21,39 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MyHomePage());
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: TextButton(
-              onPressed: () {
-                ObjectboxManager.instance.save();
-              },
-              child: Text('Save'),
-            ),
+    return MaterialApp(
+      title: 'ObjectBox PoC Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.indigo,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+        cardTheme: CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          TextButton(
-            onPressed: () {
-              ObjectboxManager.instance.get();
-            },
-            child: Text('Get'),
-          ),
-          TextButton(
-            onPressed: () {
-              ObjectboxManager.instance.update(
-                1,
-                'Updated Name ${Random().nextInt(100)}',
-              );
-            },
-            child: Text('Update'),
-          ),
-
-          TextButton(
-            child: Text('Delete'),
-            onPressed: () {
-              ObjectboxManager.instance.delete(1);
-            },
-          ),
-          TextButton(
-            child: Text('Remove All'),
-            onPressed: () {
-              ObjectboxManager.instance.removeAll();
-            },
-          ),
-        ],
+        ),
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.indigo,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+        cardTheme: CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: const HomeScreen(),
     );
   }
 }
